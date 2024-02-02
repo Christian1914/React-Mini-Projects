@@ -1,5 +1,6 @@
 import "./footer.css";
 import Logo from "./Logo.png";
+import CopyrightYear from "./CopyrightYear";
 
 function Footer() {
   return (
@@ -46,7 +47,9 @@ function Footer() {
           <p className="copyright">
             Copyright ©
             <span className="year">
-              <span id="currentYear"></span>
+              <span id="currentYear">
+                <CopyrightYear />
+              </span>
             </span>{" "}
             by usePopcorn, Inc. All rights reserved.
           </p>
