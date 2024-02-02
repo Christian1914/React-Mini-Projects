@@ -57,7 +57,8 @@
 
 .sidebar ul {
   list-style: none;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   flex-direction: column;
   gap: 1.2rem;
   font-size: 1.4rem;
@@ -65,8 +66,8 @@
 }
 
 .sidebar li {
-  display: grid;
-  grid-template-columns: 4.8rem 1fr auto;
+  /* display: grid;
+  grid-template-columns: 4.8rem 1fr auto; */
   align-items: center;
   column-gap: 1.6rem;
   padding: 1.2rem;
