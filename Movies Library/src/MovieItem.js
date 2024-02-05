@@ -6,7 +6,7 @@ function MovieItem({ movie, onAddToLibrary, isAdded }) {
       <img src={movie.imageUrl} alt={movie.title} className="movie-image" />
       <h3 className="movie-title">{movie.title}</h3>
       <p className="movie-release-date">📅 {movie.release_date}</p>
-      
+      <button>{isAdded ? "Added" : "Add to Library"}</button>
     </li>
   );
 }
