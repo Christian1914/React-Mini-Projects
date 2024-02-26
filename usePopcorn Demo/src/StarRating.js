@@ -11,14 +11,21 @@ const starContainerStyle = {
 };
 
 export default function StarRating({
-  maxRating = 5,
+  maxRating = 10,
   color = "#fcc419",
-  size = "48",
+  size = "24",
   className = "",
   messages = [],
+  onRatingChange,
 }) {
   const [rating, SetRating] = useState(0);
   const [tempRating, setTempRating] = useState(0);
+
+  const handleRate = (index) => {
+    const newRating = index + 1;
+    SetRating(newRating);
+    onRatingChange(newRating); // Call the onRatingChange prop with the new rating
+  };
 
   const textStyle = {
     lineHeight: "1",
@@ -34,7 +41,7 @@ export default function StarRating({
           <Star
             key={i}
             full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
-            onRate={() => SetRating(i + 1)}
+            onRate={() => handleRate(i)}
             onHoverIn={() => setTempRating(i + 1)}
             onHoverOut={() => setTempRating(0)}
             color={color}
