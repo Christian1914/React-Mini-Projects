@@ -36,7 +36,9 @@ export default function App() {
     });
   }
 
-  const watchedMovie = watched.find((movie) => movie.imdbID === selectedId);
+  function handleDeleteWatched(id) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  }
 
   useEffect(
     function () {
@@ -55,7 +57,6 @@ export default function App() {
           if (data.Response === "False") throw new Error("Movie not found");
           setMovies(data.Search);
         } catch (err) {
-          console.log(err.message);
           if (err.message === "Failed to fetch")
             setError("Something went wrong");
           else {
@@ -107,7 +108,10 @@ export default function App() {
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMoviesList watched={watched} />
+              <WatchedMoviesList
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </LeftAndRightBox>
@@ -264,6 +268,18 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     [selectedId]
   );
 
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `${title}`;
+
+      return function () {
+        document.title = "usePopcorn";
+      };
+    },
+    [title]
+  );
+
   if (isLoading) {
     return <Loader />;
   }
@@ -350,17 +366,21 @@ function WatchedSummary({ watched }) {
   );
 }
 
-function WatchedMoviesList({ watched }) {
+function WatchedMoviesList({ watched, onDeleteWatched }) {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <WatchedMovie movie={movie} />
+        <WatchedMovie
+          movie={movie}
+          key={movie.imdbID}
+          onDeleteWatched={onDeleteWatched}
+        />
       ))}
     </ul>
   );
 }
 
-function WatchedMovie({ movie }) {
+function WatchedMovie({ movie, onDeleteWatched }) {
   return (
     <li>
       <img src={movie.poster} alt={`${movie.title} poster`} />
@@ -378,6 +398,13 @@ function WatchedMovie({ movie }) {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
+
+        <button
+          className="btn-delete"
+          onClick={() => onDeleteWatched(movie.imdbID)}
+        >
+          X
+        </button>
       </div>
     </li>
   );
