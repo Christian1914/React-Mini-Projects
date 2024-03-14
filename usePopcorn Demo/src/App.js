@@ -34,6 +34,14 @@ export default function App() {
       }
       return currentWatched;
     });
+
+    const watched = JSON.parse(localStorage.getItem("watched")) || [];
+
+    // Add the newMovie to the watched array.
+    watched.push(newMovie);
+
+    // Update the watched list in localStorage.
+    localStorage.setItem("watched", JSON.stringify(watched));
   }
 
   function handleDeleteWatched(id) {
@@ -42,14 +50,17 @@ export default function App() {
 
   useEffect(
     function () {
+      const controller = new AbortController();
+
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
 
-          const res =
-            await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}
-    `);
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
+          );
 
           const data = await res.json();
           if (!res.ok) throw new Error("Something went wrong");
@@ -74,6 +85,10 @@ export default function App() {
       }
 
       fetchMovies();
+
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
@@ -236,6 +251,16 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     Genre: genre,
   } = movie;
 
+  const [isTop, setIsTop] = useState(imdbRating > 8);
+  console.log(isTop);
+
+  useEffect(
+    function () {
+      setIsTop(imdbRating > 8);
+    },
+    [imdbRating]
+  );
+
   function handleAdd() {
     const newWatchedMovie = {
       imdbID: selectedId,
@@ -348,13 +373,13 @@ function WatchedSummary({ watched }) {
         <p>
           <span>⭐️</span>
           <span>
-            {avgImdbRating ? parseFloat(avgImdbRating.toFixed(2)) : 0}
+            {avgImdbRating ? parseFloat(avgImdbRating.toFixed(1)) : 0}
           </span>
         </p>
         <p>
           <span>🌟</span>
           <span>
-            {avgUserRating ? parseFloat(avgUserRating.toFixed(2)) : 0}
+            {avgUserRating ? parseFloat(avgUserRating.toFixed(1)) : 0}
           </span>
         </p>
         <p>
